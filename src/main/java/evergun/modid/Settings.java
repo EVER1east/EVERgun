@@ -7,10 +7,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class Settings {
-    public static final Item gunever = Registry.register(
+    public static final Item GUN = Registry.register(
             Registries.ITEM,
             new Identifier("modid", "gunever"),
-            new gunever(new FabricItemSettings().maxDamage(666)) // Укажите прочность
+            new Gun(new FabricItemSettings().maxCount(1)) // Укажите прочность
     );
 
     public static void registerModItems() {
