@@ -9,11 +9,13 @@ import net.minecraft.util.Identifier;
 public class Settings {
     public static final Item GUN = Registry.register(
             Registries.ITEM,
-            new Identifier("modid", "gunever"),
+            new Identifier("evergun", "gunever"),
             new Gun(new FabricItemSettings().maxCount(1)) // Укажите прочность
     );
 
     public static void registerModItems() {
         System.out.println("test VERSUS TEST");
     }
+
+
 }

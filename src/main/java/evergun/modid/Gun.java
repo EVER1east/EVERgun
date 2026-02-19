@@ -48,10 +48,13 @@ public class Gun extends CrossbowItem {
     public void setMagazine(ItemStack stack, int amount) {
         stack.getOrCreateNbt().putInt("Magazine", amount);
     }
+    int count = 0;
+    int age = 0;
 
-    @Override
-    public boolean canMine(net.minecraft.block.BlockState state, World world, net.minecraft.util.math.BlockPos pos, PlayerEntity miner) {
-        return false;
+    public void setCount(ItemStack stack, int amount) {
+        float f = (float) amount / 15;
+        stack.getOrCreateNbt().putFloat("count", f);
+        System.out.println(f);
     }
 
     @Override
@@ -59,13 +62,12 @@ public class Gun extends CrossbowItem {
         ItemStack itemStack = user.getStackInHand(hand);
         int ammo = getMagazine(itemStack);
         if (isCharged(itemStack)) {
-            user.getItemCooldownManager().set(this, 1);
-            int Nammo = ammo - 1;
-            System.out.println("N" + Nammo);
-            if (Nammo >= 0) {
+            user.getItemCooldownManager().set(this, 5);
+            System.out.println("N" + ammo);
+            if (ammo > 0) {
                 shootAll(world, user, hand, itemStack, 3.1F, 1.0F);
                 putArrowBack(itemStack);
-                setMagazine(itemStack, Nammo);
+                setMagazine(itemStack, ammo - 1);
             } else {
                 setCharged(itemStack, false);
             }
@@ -95,13 +97,22 @@ public class Gun extends CrossbowItem {
                     player.stopUsingItem();
                 }
                 user.clearActiveItem();
-            } else if (usageTime > 0 && ammo < 6 && user.age % 10 == 0) {
-                setCharged(stack, true);
-                setMagazine(stack, ammo + 1);
-                System.out.println("g" + getMagazine(stack));
+                this.count = 0;
+            } else if (usageTime > 0) {
+                this.count++;
+                setCount(stack, count);
+                if (ammo < 6 && user.age - age >= 15) {
+                    setCharged(stack, true);
+                    setMagazine(stack, ammo + 1);
+                    System.out.println("g" + getMagazine(stack));
+                    this.count = 0;
+                    age = user.age;
+                }
             }
         }
     }
+
+
 
     public static void shootAll(World world, LivingEntity entity, Hand hand, ItemStack stack, float speed, float divergence) {
         List<ItemStack> list = getProjectiles(stack);

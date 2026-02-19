@@ -1,0 +1,23 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "evergun:item/crossbow_standby"
+  },
+  "overrides": [
+    { "predicate": { "count": 0.1 }, "model": "evergun:item/crossbow_pulling_0" },
+    { "predicate": { "count": 0.30 }, "model": "evergun:item/crossbow_pulling_1" },
+    { "predicate": { "count": 0.76 }, "model": "evergun:item/crossbow_pulling_2" },
+
+
+
+
+
+    { "predicate": { "ammo": 1.0 }, "model": "evergun:item/crossbow_arrow" },
+    { "predicate": { "ammo": 2.0 }, "model": "evergun:item/crossbow_arrow" },
+    { "predicate": { "ammo": 3.0 }, "model": "evergun:item/crossbow_arrow" },
+    { "predicate": { "ammo": 4.0 }, "model": "evergun:item/crossbow_arrow" },
+    { "predicate": { "ammo": 5.0 }, "model": "evergun:item/crossbow_arrow" },
+    { "predicate": { "ammo": 6.0 }, "model": "evergun:item/crossbow_arrow" }
+
+  ]
+}
