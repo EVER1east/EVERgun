@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:item/crossbow",
+  "textures": {
+    "layer0": "evergun:item/crossbow_standby"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [-95, 0, -50],
+      "translation": [ 6, -2, -8 ],
+      "scale": [ 1, 1, 1 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-95, 0, -50],
+      "translation": [ 6, -2, -8 ],
+      "scale": [ 1, 1, 1 ]
+    }
+  },
+  "overrides": [
+    { "predicate": { "ammo": 1.0 }, "model": "evergun:item/crossbow_arrow" },
+
+    { "predicate": { "animation": 0.4 }, "model": "evergun:item/crossbow_pulling_0" },
+    { "predicate": { "animation": 0.7 }, "model": "evergun:item/crossbow_pulling_1" },
+    { "predicate": { "animation": 0.9 }, "model": "evergun:item/crossbow_pulling_2" },
+
+    { "predicate": { "animation_with_arrow": 0.4 }, "model": "evergun:item/crossbow_arrow_pulling_0" },
+    { "predicate": { "animation_with_arrow": 0.7 }, "model": "evergun:item/crossbow_arrow_pulling_1" },
+    { "predicate": { "animation_with_arrow": 0.9 }, "model": "evergun:item/crossbow_arrow_pulling_2" }
+  ]
+}

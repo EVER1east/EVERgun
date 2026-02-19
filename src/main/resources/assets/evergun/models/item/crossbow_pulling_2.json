@@ -1,0 +1,4 @@
+{
+  "parent": "evergun:item/gunever",
+  "textures": { "layer0": "evergun:item/crossbow_pulling_2" }
+}

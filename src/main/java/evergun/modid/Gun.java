@@ -18,7 +18,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
@@ -33,39 +32,12 @@ import java.util.List;
 
 public class Gun extends CrossbowItem {
 
-    public Gun(Settings settings) {
-        super(settings);
-    }
-
-    public int getMagazine(ItemStack stack) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt != null) {
-            return nbt.getInt("Magazine");
-        }
-        return 0;
-    }
-
     int timer = 0;
     boolean bl = false;
+    float global;
 
-    public void setMagazine(ItemStack stack, int amount) {
-        stack.getOrCreateNbt().putInt("Magazine", amount);
-    }
-
-    public float getCount(ItemStack stack) {
-        return stack.getOrCreateNbt().getInt("count");
-    }
-
-    public void setCount(ItemStack stack, int amount) {
-        stack.getOrCreateNbt().putInt("count", amount);
-    }
-
-    public void anim(ItemStack stack, float amount) {
-        float f = amount / 20;
-        if (f > 1.0F) {
-            f = 1.0F;
-        }
-        stack.getOrCreateNbt().putFloat("count", f);
+    public Gun(Settings settings) {
+        super(settings);
     }
 
     @Override
@@ -114,11 +86,25 @@ public class Gun extends CrossbowItem {
                 setCharged(stack, true);
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE, SoundCategory.PLAYERS, 0.5F, 1.2F);
                 setCount(stack, 0);
+                setCharged(stack, false);
+                anim(stack, 0);
             } else {
-                anim(stack, timer);
+                anim(stack, timer + 1);
                 setCount(stack, timer + 1);
             }
         }
+    }
+
+    @Override
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (!world.isClient) {
+            setCount(stack, 0);
+            anim(stack, 0);
+            if (getMagazine(stack) > 0) {
+                setCharged(stack, true);
+            }
+        }
+        super.onStoppedUsing(stack, world, user, remainingUseTicks);
     }
 
     public static void shootAll(World world, LivingEntity entity, Hand hand, ItemStack stack, float speed, float divergence) {
@@ -242,6 +228,36 @@ public class Gun extends CrossbowItem {
     private static float getSoundPitch(boolean flag, Random random) {
         float f = flag ? 0.63F : 0.43F;
         return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f;
+    }
+
+
+    public int getMagazine(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null) {
+            return nbt.getInt("Magazine");
+        }
+        return 0;
+    }
+
+    public void setMagazine(ItemStack stack, int amount) {
+        stack.getOrCreateNbt().putInt("Magazine", amount);
+    }
+
+    public float getCount(ItemStack stack) {
+        return stack.getOrCreateNbt().getInt("count");
+    }
+
+    public void setCount(ItemStack stack, int amount) {
+        stack.getOrCreateNbt().putInt("count", amount);
+    }
+    public void anim(ItemStack stack, float amount) {
+        float f = global;
+        if (amount % 2 == 0) {
+            f = amount / 20;
+            global = f;
+        }
+        System.out.println(f);
+        stack.getOrCreateNbt().putFloat("animation", f);
     }
 }
 
