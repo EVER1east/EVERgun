@@ -45,39 +45,50 @@ public class Gun extends CrossbowItem {
         return 0;
     }
 
+    int timer = 0;
+    boolean bl = false;
+
     public void setMagazine(ItemStack stack, int amount) {
         stack.getOrCreateNbt().putInt("Magazine", amount);
     }
 
-    @Override
-    public boolean canMine(net.minecraft.block.BlockState state, World world, net.minecraft.util.math.BlockPos pos, PlayerEntity miner) {
-        return false;
+    public float getCount(ItemStack stack) {
+        return stack.getOrCreateNbt().getInt("count");
+    }
+
+    public void setCount(ItemStack stack, int amount) {
+        stack.getOrCreateNbt().putInt("count", amount);
+    }
+
+    public void anim(ItemStack stack, float amount) {
+        float f = amount / 20;
+        if (f > 1.0F) {
+            f = 1.0F;
+        }
+        stack.getOrCreateNbt().putFloat("count", f);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         int ammo = getMagazine(itemStack);
-        if (isCharged(itemStack)) {
-            user.getItemCooldownManager().set(this, 1);
-            int Nammo = ammo - 1;
-            System.out.println("N" + Nammo);
-            if (Nammo >= 0) {
-                shootAll(world, user, hand, itemStack, 3.1F, 1.0F);
+        if (ammo > 0) {
+            shootAll(world, user, hand, itemStack, 3.1F, 1.0F);
+            int newAmmo = ammo - 1;
+            setMagazine(itemStack, newAmmo);
+
+            if (newAmmo > 0) {
+                bl = false;
                 putArrowBack(itemStack);
-                setMagazine(itemStack, Nammo);
+                user.getItemCooldownManager().set(this, 10);
+                setCharged(itemStack, true);
             } else {
                 setCharged(itemStack, false);
             }
             return TypedActionResult.consume(itemStack);
-        } else if (!user.getProjectileType(itemStack).isEmpty()) {
-            if (!isCharged(itemStack)) {
-                user.setCurrentHand(hand);
-            }
-
-            return TypedActionResult.consume(itemStack);
         } else {
-            return TypedActionResult.fail(itemStack);
+            user.setCurrentHand(hand);
+            return TypedActionResult.consume(itemStack);
         }
     }
 
@@ -86,19 +97,26 @@ public class Gun extends CrossbowItem {
         if (!world.isClient) {
             int usageTime = getMaxUseTime(stack) - remainingUseTicks * 3;
             int ammo = getMagazine(stack);
-            SoundEvent soundEvent = SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE;
-            if (usageTime > 0 && ammo > 6) {
+            timer = (int) getCount(stack);
+            if (ammo >= 6) {
+                if (!bl) {
+                    bl = true;
+                    world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_CROSSBOW_LOADING_END, SoundCategory.PLAYERS, 0.9F, 1F);
+                }
+                return;
+            }
+
+            if (usageTime > 0 && getCount(stack) >= 20) {
+                int NAmmo = ammo + 1;
+                System.out.println("G" + NAmmo);
+                setMagazine(stack, NAmmo);
                 putArrowBack(stack);
                 setCharged(stack, true);
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), soundEvent, SoundCategory.PLAYERS, 0.5F, 1.0F);
-                if (user instanceof PlayerEntity player) {
-                    player.stopUsingItem();
-                }
-                user.clearActiveItem();
-            } else if (usageTime > 0 && ammo < 6 && user.age % 10 == 0) {
-                setCharged(stack, true);
-                setMagazine(stack, ammo + 1);
-                System.out.println("g" + getMagazine(stack));
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE, SoundCategory.PLAYERS, 0.5F, 1.2F);
+                setCount(stack, 0);
+            } else {
+                anim(stack, timer);
+                setCount(stack, timer + 1);
             }
         }
     }
