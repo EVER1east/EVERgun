@@ -16,7 +16,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -232,20 +231,6 @@ public class Gun extends Item {
     /**
      * {@return the maximum durability of this item} Can be configured through {@link Item.Settings#maxDamage(int) settings.maxDamage()}.
      */
-    @Override
-
-    public final int getMaxDamage() {
-        return this.maxDamage;
-    }
-
-    /**
-     * {@return whether this item can lose durability}
-     */
-    @Override
-
-    public boolean isDamageable() {
-        return this.maxDamage > 0;
-    }
 }
 
 
