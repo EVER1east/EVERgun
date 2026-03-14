@@ -9,7 +9,11 @@ public class Animation {
         ModelPredicateProviderRegistry.register(Settings.GUN, new Identifier("animation"), (stack, world, entity, seed) -> {
             if (stack.hasNbt()) {
                 assert stack.getNbt() != null;
-                return stack.getNbt().getFloat("animation");
+                float f = stack.getNbt().getFloat("animation");
+                int a = stack.getNbt().getInt("magazine");
+                if (a < 6) {
+                    return f;
+                }
             }
             return 0.0F;
         });
@@ -17,7 +21,7 @@ public class Animation {
         ModelPredicateProviderRegistry.register(Settings.GUN, new Identifier("ammo"), (stack, world, entity, seed) -> {
             if (stack.hasNbt()) {
                 assert stack.getNbt() != null;
-                return (float) stack.getNbt().getInt("Magazine");
+                return (float) stack.getNbt().getInt("magazine");
             }
             return 0.0F;
         });
@@ -26,8 +30,8 @@ public class Animation {
             if (stack.hasNbt()) {
                 assert stack.getNbt() != null;
                 float f = stack.getNbt().getFloat("animation");
-                int a = stack.getNbt().getInt("Magazine");
-                if (a > 0 && f > 0) {
+                int a = stack.getNbt().getInt("magazine");
+                if (a > 0 && a < 6 && f > 0) {
                     return f;
                 }
             }
