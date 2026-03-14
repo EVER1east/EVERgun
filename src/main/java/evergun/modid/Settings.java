@@ -17,3 +17,5 @@ public class Settings {
         EVERgun.LOGGER.info("Registering items...");
     }
 }
+
+

@@ -1,27 +1,32 @@
 package evergun.modid;
 
+import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.List;
 
 public class Gun extends Item {
     static int del = 20;
@@ -145,7 +150,7 @@ public class Gun extends Item {
     }
 
     private static PersistentProjectileEntity createArrow(World world, LivingEntity entity, ItemStack crossbow, ItemStack arrowStack) {
-        ArrowItem arrowItem = (ArrowItem)(arrowStack.getItem() instanceof ArrowItem ? arrowStack.getItem() : Items.ARROW);
+        ArrowItem arrowItem = (ArrowItem) (arrowStack.getItem() instanceof ArrowItem ? arrowStack.getItem() : Items.ARROW);
         PersistentProjectileEntity projectile = arrowItem.createArrow(world, arrowStack, entity);
 
         if (entity instanceof PlayerEntity) {
@@ -200,5 +205,49 @@ public class Gun extends Item {
         }
         return 0;
     }
+
+    private static List<ItemStack> getProjectiles(ItemStack crossbow) {
+        List<ItemStack> list = Lists.newArrayList();
+        NbtCompound nbtCompound = crossbow.getNbt();
+        if (nbtCompound != null && nbtCompound.contains("LoadedArrows", 9)) {
+            NbtList nbtList = nbtCompound.getList("LoadedArrows", 10);
+            if (nbtList != null) {
+                for (int i = 0; i < nbtList.size(); ++i) {
+                    NbtCompound nbtCompound2 = nbtList.getCompound(i);
+                    list.add(ItemStack.fromNbt(nbtCompound2));
+                }
+            }
+        }
+
+        return list;
+    }
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        List<ItemStack> list = getProjectiles(stack);
+        if (!list.isEmpty()) {
+            ItemStack itemStack = (ItemStack)list.get(getMagazine(stack) -1);
+            tooltip.add(Text.translatable("item.minecraft.crossbow.projectile").append(ScreenTexts.SPACE).append(itemStack.toHoverableText()));
+        }
+    }
+
+    /**
+     * {@return the maximum durability of this item} Can be configured through {@link Item.Settings#maxDamage(int) settings.maxDamage()}.
+     */
+    @Override
+
+    public final int getMaxDamage() {
+        return this.maxDamage;
+    }
+
+    /**
+     * {@return whether this item can lose durability}
+     */
+    @Override
+
+    public boolean isDamageable() {
+        return this.maxDamage > 0;
+    }
 }
+
+
+
 
