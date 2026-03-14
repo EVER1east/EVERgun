@@ -16,7 +16,7 @@ public class EVERgun implements ModInitializer {
 	public void onInitialize() {
         registerModItems();
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register((itemGroup) -> itemGroup.add(Settings.GUN));
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("Loading EVERgun...");
 	}
 
 }

@@ -10,7 +10,7 @@ public class Settings {
     public static final Item GUN = Registry.register(
             Registries.ITEM,
             new Identifier("evergun", "gunever"),
-            new Gun(new FabricItemSettings().maxCount(1)) // Укажите прочность
+            new Gun(new FabricItemSettings().maxDamage(752))
     );
 
     public static void registerModItems() {
