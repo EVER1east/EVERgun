@@ -3,12 +3,12 @@
 	"id": "evergun",
 	"version": "${version}",
 	"name": "EVERgun",
-	"description": "",
+	"description": "A simple mod which adds an arrow gun into the game with 2 new vanilla enchantments",
 	"authors": [
 		"EVER2east", "Crystal"
 	],
 	"contact": {
-		"homepage": "",
+		"homepage": "https://modrinth.com/project/evergun",
 		"sources": "https://github.com/EVER1east/EVERgun",
         "issues": "https://github.com/EVER1east/EVERgun/issues"
 	},
