@@ -3,11 +3,16 @@ package evergun.modid;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ArrowItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -57,10 +62,13 @@ public class Gun extends Item {
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (world.isClient || !(user instanceof PlayerEntity player)) return;
 
-        int usedTicks = getMaxUseTime(stack) - remainingUseTicks;
-        setAnim(stack, usedTicks % del);
+        int quickChargeLevel = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
+        int currentDel = Math.max(11, del - (quickChargeLevel * 2));
 
-        if (usedTicks > 0 && usedTicks % del == 0) {
+        int usedTicks = getMaxUseTime(stack) - remainingUseTicks;
+        setAnim(stack, (float) (usedTicks % currentDel) / currentDel);
+
+        if (usedTicks > 0 && usedTicks % currentDel == 0) {
             int magazine = getMagazine(stack);
 
             if (magazine < 6) {
@@ -133,6 +141,7 @@ public class Gun extends Item {
             if (creative) {
                 projectileEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
             }
+            int power = EnchantmentHelper.getLevel(Enchantments.POWER, crossbow);
 
             if (shooter instanceof CrossbowUser user) {
                 user.shoot(user.getTarget(), crossbow, projectileEntity, 0);
@@ -140,10 +149,10 @@ public class Gun extends Item {
             crossbow.damage(3, shooter, e -> e.sendToolBreakStatus(hand));
             world.spawnEntity(projectileEntity);
             Vec3d vec3d = shooter.getOppositeRotationVector(1.0F);
-            Quaternionf quaternionf = new Quaternionf().setAngleAxis(1 * (float) (Math.PI / 180.0), vec3d.x, vec3d.y, vec3d.z);
+            Quaternionf quaternionf = new Quaternionf().setAngleAxis(0 * (float) (Math.PI / 180.0), vec3d.x, vec3d.y, vec3d.z);
             Vec3d vec3d2 = shooter.getRotationVec(1.0F);
             Vector3f vector3f = vec3d2.toVector3f().rotate(quaternionf);
-            projectileEntity.setVelocity(vector3f.x(), vector3f.y(), vector3f.z(), 3, 1);
+            projectileEntity.setVelocity(vector3f.x(), vector3f.y(), vector3f.z(), 3 + (power * 0.2F), 1);
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, soundPitch);
         }
     }
@@ -151,7 +160,9 @@ public class Gun extends Item {
     private static PersistentProjectileEntity createArrow(World world, LivingEntity entity, ItemStack crossbow, ItemStack arrowStack) {
         ArrowItem arrowItem = (ArrowItem) (arrowStack.getItem() instanceof ArrowItem ? arrowStack.getItem() : Items.ARROW);
         PersistentProjectileEntity projectile = arrowItem.createArrow(world, arrowStack, entity);
-
+        if (EnchantmentHelper.getLevel(Enchantments.FLAME, crossbow) > 0) {
+            projectile.setOnFireFor(100);
+        }
         if (entity instanceof PlayerEntity) {
             projectile.setCritical(true);
         }
@@ -160,9 +171,9 @@ public class Gun extends Item {
         return projectile;
     }
 
-    public static void setAnim(ItemStack stack, int amount) {
+    public static void setAnim(ItemStack stack, float amount) {
         NbtCompound nbt = stack.getOrCreateNbt();
-        nbt.putFloat("animation", (float) amount / del);
+        nbt.putFloat("animation", amount);
     }
 
     public void addProjectile(ItemStack gun, ItemStack arrow) {
@@ -226,6 +237,11 @@ public class Gun extends Item {
             ItemStack stack1 = list.get(getMagazine(stack) - 1);
             tooltip.add(Text.translatable("item.minecraft.crossbow.projectile").append(ScreenTexts.SPACE).append(stack1.toHoverableText()).append(ScreenTexts.SPACE).append(getMagazine(stack) + "/6"));
         }
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return true;
     }
 }
 
