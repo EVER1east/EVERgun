@@ -21,6 +21,7 @@ class EnchantsMixin {
                     self == Enchantments.FLAME ||
                     self == Enchantments.POWER ||
                     self == Enchantments.UNBREAKING ||
+                    self == Enchantments.PUNCH ||
                     self == Enchantments.MENDING) {
                 cir.setReturnValue(true);
             }

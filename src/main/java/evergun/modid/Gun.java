@@ -1,6 +1,7 @@
 package evergun.modid;
 
 import com.google.common.collect.Lists;
+import evergun.modid.enchantments.ModEnchantments;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -29,7 +30,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import java.util.List;
 
 public class Gun extends Item {
@@ -158,11 +161,38 @@ public class Gun extends Item {
     }
 
     private static PersistentProjectileEntity createArrow(World world, LivingEntity entity, ItemStack crossbow, ItemStack arrowStack) {
+
+
+
         ArrowItem arrowItem = (ArrowItem) (arrowStack.getItem() instanceof ArrowItem ? arrowStack.getItem() : Items.ARROW);
         PersistentProjectileEntity projectile = arrowItem.createArrow(world, arrowStack, entity);
+
+        int k = EnchantmentHelper.getLevel(Enchantments.PUNCH, crossbow);
+        if (k > 0) {
+            projectile.setPunch(Math.min(1, k));
+        }
+
         if (EnchantmentHelper.getLevel(Enchantments.FLAME, crossbow) > 0) {
             projectile.setOnFireFor(100);
         }
+
+        int piercingLevel = EnchantmentHelper.getLevel(Enchantments.PIERCING, crossbow);
+        if (piercingLevel > 0) {
+            projectile.setPierceLevel((byte)piercingLevel);
+        }
+
+        int frostLevel = EnchantmentHelper.getLevel(ModEnchantments.FROST, crossbow);
+
+        if (frostLevel > 0 && projectile instanceof ArrowEntity arrow) {
+            projectile.getCommandTags().add("frost_" + frostLevel);
+        }
+
+        int witherLevel = EnchantmentHelper.getLevel(ModEnchantments.WITHER, crossbow);
+
+        if (witherLevel > 0 && projectile instanceof ArrowEntity arrow) {
+            projectile.getCommandTags().add("wither_" + witherLevel);
+        }
+
         if (entity instanceof PlayerEntity) {
             projectile.setCritical(true);
         }
