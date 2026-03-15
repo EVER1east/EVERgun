@@ -223,14 +223,10 @@ public class Gun extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         List<ItemStack> list = getProjectiles(stack);
         if (!list.isEmpty()) {
-            ItemStack itemStack = (ItemStack)list.get(getMagazine(stack) -1);
-            tooltip.add(Text.translatable("item.minecraft.crossbow.projectile").append(ScreenTexts.SPACE).append(itemStack.toHoverableText()));
+            ItemStack stack1 = list.get(getMagazine(stack) - 1);
+            tooltip.add(Text.translatable("item.minecraft.crossbow.projectile").append(ScreenTexts.SPACE).append(stack1.toHoverableText()).append(ScreenTexts.SPACE).append(getMagazine(stack) + "/6"));
         }
     }
-
-    /**
-     * {@return the maximum durability of this item} Can be configured through {@link Item.Settings#maxDamage(int) settings.maxDamage()}.
-     */
 }
 
 

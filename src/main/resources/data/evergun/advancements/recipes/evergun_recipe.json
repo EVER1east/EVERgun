@@ -59,18 +59,13 @@
           }
         ]
       }
-    },
-    "has_the_recipe": {
-      "trigger": "minecraft:recipe_unlocked",
-      "conditions": {
-        "recipe": "evergun:evergun"
-      }
     }
   },
   "requirements": [
-    [
-      "has_redstone", "has_string", "has_hook", "has_echo", "has_star",
-      "has_the_recipe"
-    ]
+    ["has_redstone"],
+    ["has_string"],
+    ["has_hook"],
+    ["has_echo"],
+    ["has_star"]
   ]
 }

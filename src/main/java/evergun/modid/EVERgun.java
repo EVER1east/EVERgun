@@ -15,7 +15,7 @@ public class EVERgun implements ModInitializer {
 	@Override
 	public void onInitialize() {
         registerModItems();
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register((itemGroup) -> itemGroup.add(Settings.GUN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register((itemGroup) -> itemGroup.add(Settings.GUN));
 		LOGGER.info("Loading EVERgun...");
 	}
 

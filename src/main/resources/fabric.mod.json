@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"homepage": "",
-		"sources": ""
+		"sources": "https://github.com/EVER1east/EVERgun",
+        "issues": "https://github.com/EVER1east/EVERgun/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/evergun/icon.png",
