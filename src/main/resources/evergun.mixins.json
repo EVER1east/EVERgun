@@ -3,6 +3,7 @@
   "package": "evergun.modid.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ArrowEntityMixin",
     "EnchantsMixin"
   ],
   "injectors": {

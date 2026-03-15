@@ -12,25 +12,8 @@ public class FrostEnchantment extends Enchantment {
         super(Rarity.RARE, EnchantmentTarget.CROSSBOW, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
     }
 
-
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
     @Override
     public boolean isAcceptableItem(ItemStack stack) {
         return stack.getItem() instanceof Gun;
-    }
-
-    @Override
-    public boolean isAvailableForEnchantedBookOffer() {
-        return true;
-    }
-
-    @Override
-    public boolean isAvailableForRandomSelection() {
-        return true;
     }
 }
